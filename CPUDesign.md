@@ -1,4 +1,14 @@
 Introduction:
+	This CPU uses a bus based design, with each register only interacting with the bus. In practice, this means any operation must put data on the bus or take data off the bus.
+
+Registers:
+	General Purpose:
+		A, B, C
+	PC - Program Counter, increments every clock cycle
+	FLAGS - ABCDEFGHIJKLMNOP
+	A - Overflow, set if an addition operation has an overflow
+	B - Zero bit, set if an addition operation results in zero
+
 
 OPCODES:
 
@@ -8,12 +18,10 @@ LDB
 	Loads the value on the bus into the B register
 LDC
 	Loads the value on the bus into the C register
-LDD
-	Loads the value on the bus into the D register
 LDPC
 	Loads the value on the bus into the PC register
-LDPCS
-	Loads the value on the bus into the PC register only if the 'set' bit in FLAGS is 1
+LDPNZ
+	Loads the value on the bus into the PC register only if the 'zero' bit in FLAGS is 1
 LDF
 	Loads the value on the bus into the FLAGS register
 PUSH

@@ -1,14 +1,16 @@
 #include <stdio.h>
+#include <stddef.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include "emulator.h"
 
 
 
 
-void a();
+void fib();
 
 int main(int argc, char** argv) {
-    a();
+    fib();
 
     if (argc < 2) {
         printf("USAGE: \n"
@@ -76,7 +78,11 @@ int main(int argc, char** argv) {
             goto next;
         case ADD:
             printf("ADD called\n");
+            // Set the overflow and zero bit if necessary
+            if (cpu->REGISTER_A + cpu->REGISTER_B == 0) cpu->FLAGS |= 0b10;
+            if ((size_t)cpu->REGISTER_A + (size_t)cpu->REGISTER_B > (size_t)UINT16_MAX) cpu->FLAGS |= 0b1;
             cpu->REGISTER_A = cpu->REGISTER_A + cpu->REGISTER_B;
+            
             goto next;
         case LOADM:
             printf("LOADM called\n");
@@ -127,7 +133,7 @@ uint16_t* read_file(char* path, size_t* file_len) {
     return (uint16_t*)buffer;
 }
 
-void a() {
+void fib() {
     int a = 0;
     int b = 1;
     int c = 10;

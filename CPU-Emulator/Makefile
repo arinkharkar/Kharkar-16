@@ -1,10 +1,11 @@
 CC=/usr/bin/gcc
 LD=/usr/bin/gcc
 
-all: emulator.o link
+all: emulator
 
-emulator.o:
+emulator: bin/emulator.o
+	$(LD) bin/emulator.o -o emulator
+
+emulator.o: src/emulator.c
 	$(CC) -c src/emulator.c -o bin/emulator.o
 
-link:
-	$(LD) bin/emulator.o -o emulator

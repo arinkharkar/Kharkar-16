@@ -11,7 +11,8 @@ Registers:
 
 
 OPCODES:
-
+HLT
+	Halts the CPU
 LDA
 	Loads the value on the bus into the A register
 LDB

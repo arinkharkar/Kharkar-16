@@ -31,7 +31,7 @@ char* read_file(char* path, size_t* file_len);
 
 int write_file(char* path, size_t file_len, char* write_contents);
 
-char* assemble(char* input_file, size_t* output_file_size);
+uint8_t* assemble(char* input_file, size_t* output_file_size);
 
 int get_input_output_file_names(char* src_file, char* out_file, int argc, char** argv);
 

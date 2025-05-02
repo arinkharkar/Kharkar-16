@@ -28,12 +28,13 @@ int main(int argc, char** argv) {
     input_file[input_file_len] = '\0';
 
     size_t output_file_size = 0;
-    char* machine_code = assemble(input_file, &output_file_size);
+    uint8_t* machine_code = assemble(input_file, &output_file_size);
     free(input_file);
     if (!machine_code) {
         fprintf(stderr, "Error Assembling\n");
         return 1;
     }
+    
     if (write_file(output_file_name, output_file_size, machine_code)) {
         fprintf(stderr, "Error writing to %s\n", output_file_name);
         return 1;
@@ -90,9 +91,10 @@ char* read_file(char* path, size_t* file_len) {
     return (char*)buffer;
 }
 
-int write_file(char* path, size_t file_len, char* write_contents) {
+int write_file(char* path, size_t file_len, uint8_t* write_contents) {
     FILE* file = fopen(path, "wb");
     if (!file) return 1;
+    
     if (fwrite(write_contents, 1, file_len, file) != file_len) return 1;
     fclose(file);
     return 0;
@@ -105,10 +107,11 @@ uint8_t* assemble(char* input_buf, size_t* output_file_size) {
     void* tokens_orig = tokens;
     uint16_t* output_file_buf = malloc(sizeof(uint16_t)*(token_count+1));
     if (!tokens) { exit(1); }
-    *output_file_size = token_count;
+    *output_file_size = token_count*sizeof(uint16_t);
     // This assembler is very simple, go through each instruction and translate it directly to the OPCODE
     for (int i = 0; i < token_count; i++) {
         switch (*tokens) {
+            
         case HLT:
             output_file_buf[i] = (uint16_t)HLT;
             break;
@@ -132,6 +135,7 @@ uint8_t* assemble(char* input_buf, size_t* output_file_size) {
             break;
         case PUSH:
             output_file_buf[i] = (uint16_t)PUSH;
+            break;
         case PUSHI:
             output_file_buf[i] = (uint16_t)PUSHI;
             break;
@@ -145,7 +149,13 @@ uint8_t* assemble(char* input_buf, size_t* output_file_size) {
             output_file_buf[i] = (uint16_t)LOADVM;
             break;
         default:
-            fprintf(stderr, "Unknown Error, Unknown Token: %d\nHalting Assembler...\n", (uint16_t)*tokens);
+            // check if the previous token is PUSHI, if it is then this token should be added as a raw number
+            if (*(tokens-1) == PUSHI)
+                output_file_buf[i] = (uint16_t)(*tokens);
+            else {
+                fprintf(stderr, "Error, Unknown Token: %d\nHalting Assembler...\n", (uint16_t)*tokens);
+                exit(1);
+            }
             break;
         }
         tokens++;
@@ -229,7 +239,11 @@ token* tokenize_input(char* input, size_t* token_amount) {
                 memset(current_tok, 0, MAX_TOKEN_LENGTH);
                 printf("LDF found\n");
             } else if (!strcmp(current_tok, "PUSH")) {
-                token_vec[token_amt] = PUSH;
+                // we need to check if the next token will be a number or a letter. If it is a number, we know we need to use PUSHI Imm16 (we know cur+1 is a valid address since *cur isnt a NULL character)
+                if (*(cur+1) >= '0' && *(cur+1) <= '9' && *cur != '\0')
+                    token_vec[token_amt] = PUSHI;
+                else
+                    token_vec[token_amt] = PUSH;
                 i = 0;
                 token_amt++;
                 // overwrite the token to 0
@@ -258,8 +272,20 @@ token* tokenize_input(char* input, size_t* token_amount) {
                 printf("LOADVM found\n");
             // If the current token isnt empty (which could happen if the last line had an extra \n char), then we have an undefined token
             } else if(strlen(current_tok) != 0) {
-                fprintf(stderr, "ERROR: Unrecognized Token: %s\n", current_tok);
-                exit(1);
+                // first, since PUSH Imm16 takes an immediate value in, check if this unknown token is an immediate and that the previous token is a PUSHI
+                if (is_number(current_tok) && token_amt > 0 && token_vec[token_amt - 1] == PUSHI) {
+                    int value = atoi(current_tok);
+                    token_vec[token_amt] = value;
+
+                    i = 0;
+                    token_amt++;
+                    // overwrite the token to 0
+                    memset(current_tok, 0, MAX_TOKEN_LENGTH);
+                    printf("%d found\n", value);
+                } else {
+                    fprintf(stderr, "ERROR: Unrecognized Token: %s\n", current_tok);
+                    exit(1);
+                }
             }
 
             // if we reached the end of the file
@@ -272,4 +298,14 @@ token* tokenize_input(char* input, size_t* token_amount) {
     }
     *token_amount = token_amt;
     return token_vec;
+}
+
+
+bool is_number(const char* str) {
+    char* s = (char*)str;
+    while (*(++s) != '\0') {
+        if (*s < '0' || *s > '9')
+            return false;
+    }
+    return true;
 }

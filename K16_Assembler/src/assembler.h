@@ -29,12 +29,14 @@ typedef enum {
 
 char* read_file(char* path, size_t* file_len);
 
-int write_file(char* path, size_t file_len, char* write_contents);
+int write_file(char* path, size_t file_len, uint8_t* write_contents);
 
 uint8_t* assemble(char* input_file, size_t* output_file_size);
 
 int get_input_output_file_names(char* src_file, char* out_file, int argc, char** argv);
 
 token* tokenize_input(char* input, size_t* token_amount);
+
+bool is_number(const char* str);
 
 #endif

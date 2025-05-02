@@ -97,11 +97,11 @@ int write_file(char* path, size_t file_len, char* write_contents) {
     return 0;
 }
 
-char* assemble(char* input_buf, size_t* output_file_size) {
+uint8_t* assemble(char* input_buf, size_t* output_file_size) {
     // For now, create an abusurdly large buffer to write to
-    char* output_file_buf = malloc(32767);
+    uint8_t* output_file_buf = malloc(32767);
     size_t token_count = 0;
-    tokenize_input(input_buf, &token_count);
+    tokenize_input("LDA\nLDB", &token_count);
 
 
     // This assembler is very simple, go through each instruction and translate it directly to the OPCODE
@@ -113,19 +113,23 @@ token* tokenize_input(char* input, size_t* token_amount) {
     token* token_vec = malloc(sizeof(token)*50);
     size_t token_amt = 0;
     char* cur = input;
-
+    printf("A: \n%s\n", cur);
     char current_tok[16] = {0};
     int i = 0;
     while(*cur != '\0') {
+        //printf("cur: %d\n", *cur);
         if (*cur == ' ' || *cur == '\n') {
+            
             if (!strcmp(current_tok, "LDA")) {
                 token_vec[token_amt] = LDA;
                 i = 0;
                 token_amt++;
+                printf("Found LDA");
             } else if (!strcmp(current_tok, "LDB")) {
                 token_vec[token_amt] = LDB;
                 i = 0;
                 token_amt++;
+                printf("Found LDB");
             } else {
                 fprintf(stderr, "ERROR: Unrecognized Token: %s\n", current_tok);
                 printf("len: %ld\n", strlen(current_tok));

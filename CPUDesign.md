@@ -81,6 +81,8 @@ LDPCNZI Imm:
 	else
 		RegPC++
 
+LDM
+
 
 
 

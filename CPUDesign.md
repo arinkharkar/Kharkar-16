@@ -3,7 +3,9 @@ Introduction:
 
 Registers:
 	General Purpose:
-		A, B, C
+		A, B*
+	* The B resister can only store the value from the A register, thus, all operations go through the A register and if needed, are stored into the B register
+	Result - Stores the result of ADD
 	PC - Program Counter, increments every clock cycle
 	FLAGS - ABCDEFGHIJKLMNOP
 	A - Overflow, set if an addition operation has an overflow
@@ -11,38 +13,72 @@ Registers:
 
 
 OPCODES:
-HLT
-	Halts the CPU
-LDAM [Imm16 Addr]
-	Loads the value located at [Addr] in memory into the A Register
-LDAB
-	Loads the value on the B register into the A Register
-LDB
-	Loads the value on the bus into the B register
-LDC
-	Loads the value on the bus into the C register
-LDPC
-	Loads the value on the bus into the PC register
-LDPNZ
-	Loads the value on the bus into the PC register only if the 'zero' bit in FLAGS is 1
-LDF
-	Loads the value on the bus into the FLAGS register
-PUSH
-	Puts the value found at [%A] onto the bus
-PUSH Imm16 
-	Puts the value Imm16 onto the bus
-ADD
-	Adds Register A to Register B and stores into the BUS (BUS=%A+%B)
-LOADM
-	Writes the current value on the bus into the memory address stored in Register A
-LOADVM
-	Writes the current value on the bus into the video memory address stored in Register A
+Key:
+	Imm - A constant 16 bit integer
+	Addr - A 16 bit wide pointer
+	Reg - Either the A or B register (The rest are reserved and cannot be used for general purpose)
 
-PUSH 0
-LDA
+LDAI Imm:
+	RegA = Imm
+	RegPC++
 
-PUSH 'A'
-LOADVM
+LDAM Addr:
+	RegA = Memory[Addr]
+	RegPC++
+
+LDAB:
+	RegA = RegB
+	RegPC++
+
+LDARES:
+	RegA = RegResult
+	RegPC++
+
+LDAFLAG:
+	RegA = RegFlag
+
+
+LDBA:
+	RegB = RegA
+	RegPC++
+
+ADD:
+	RegResult = RegA + RegB
+
+	if (RegResult == 0)
+		RegFlags.Zero = 1
+	else 
+		RegFlags.Zero = 0
 	
+	if (RegA + RegB > UINT16_MAX)
+		RegFlags.Overflow = 1
+	else
+		RegFlags.Overflow = 0
+	
+	RegPC++
+	
+LDPCA:
+	RegPC = RegA
+	
+LDPCI Imm:
+	RegPC = Imm
 
+LDPCNZA:
+	if (RegFlags.Zero == 1)
+		RegPC = RegA
+	else
+		RegPC++
+	
+LDPCNZB:
+	if (RegFlags.Zero == 1)
+		RegPC = RegA
+	else
+		RegPC++
 
+LDPCNZI Imm:
+	if (RegFlags.Zero == 1)
+		RegPC = Imm
+	else
+		RegPC++
+
+LDM

@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "emulator.h": "c",
+        "limits.h": "c",
+        "string.h": "c",
+        "stdio.h": "c"
+    }
+}

@@ -13,8 +13,10 @@ Registers:
 OPCODES:
 HLT
 	Halts the CPU
-LDA
-	Loads the value on the bus into the A register
+LDAM [Imm16 Addr]
+	Loads the value located at [Addr] in memory into the A Register
+LDAB
+	Loads the value on the B register into the A Register
 LDB
 	Loads the value on the bus into the B register
 LDC
@@ -30,7 +32,7 @@ PUSH
 PUSH Imm16 
 	Puts the value Imm16 onto the bus
 ADD
-	Adds Register A to Register B and stores into Register A (%A=%A+%B)
+	Adds Register A to Register B and stores into the BUS (BUS=%A+%B)
 LOADM
 	Writes the current value on the bus into the memory address stored in Register A
 LOADVM

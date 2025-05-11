@@ -10,7 +10,8 @@
 
 int main(int argc, char** argv) {
     if (argc < 2) {
-        printf("USAGE: k16-assembler -i [source-file.k16] -o [output-file]");
+        printf("USAGE: k16-assembler -i [source-file.k16] -o [output-file]\n");
+        return 1;
     }
     char source_file_name[MAX_PATH];
     char output_file_name[MAX_PATH];
@@ -195,49 +196,42 @@ token* tokenize_input(char* input, size_t* token_amount) {
                 token_amt++;
                 // overwrite the token to 0
                 memset(current_tok, 0, MAX_TOKEN_LENGTH);
-                printf("HLT found\n");
             } else if (!strcmp(current_tok, "LDA")) {
                 token_vec[token_amt] = LDA;
                 i = 0;
                 token_amt++;
                 // overwrite the token to 0
                 memset(current_tok, 0, MAX_TOKEN_LENGTH);
-                printf("LDA found\n");
             } else if (!strcmp(current_tok, "LDB")) {
                 token_vec[token_amt] = LDB;
                 i = 0;
                 token_amt++;
                 // overwrite the token to 0
                 memset(current_tok, 0, MAX_TOKEN_LENGTH);
-                printf("LDB found\n");
             } else if (!strcmp(current_tok, "LDC")) {
                 token_vec[token_amt] = LDC;
                 i = 0;
                 token_amt++;
                 // overwrite the token to 0
                 memset(current_tok, 0, MAX_TOKEN_LENGTH);
-                printf("LDC found\n");
             } else if (!strcmp(current_tok, "LDPC")) {
                 token_vec[token_amt] = LDPC;
                 i = 0;
                 token_amt++;
                 // overwrite the token to 0
                 memset(current_tok, 0, MAX_TOKEN_LENGTH);
-                printf("LDPC found\n");
             } else if (!strcmp(current_tok, "LDPCNZ")) {
                 token_vec[token_amt] = LDPCNZ;
                 i = 0;
                 token_amt++;
                 // overwrite the token to 0
                 memset(current_tok, 0, MAX_TOKEN_LENGTH);
-                printf("LDPCNZ found\n");
             } else if (!strcmp(current_tok, "LDF")) {
                 token_vec[token_amt] = LDF;
                 i = 0;
                 token_amt++;
                 // overwrite the token to 0
                 memset(current_tok, 0, MAX_TOKEN_LENGTH);
-                printf("LDF found\n");
             } else if (!strcmp(current_tok, "PUSH")) {
                 // we need to check if the next token will be a number or a letter. If it is a number, we know we need to use PUSHI Imm16 (we know cur+1 is a valid address since *cur isnt a NULL character)
                 if (*(cur+1) >= '0' && *(cur+1) <= '9' && *cur != '\0')
@@ -248,28 +242,24 @@ token* tokenize_input(char* input, size_t* token_amount) {
                 token_amt++;
                 // overwrite the token to 0
                 memset(current_tok, 0, MAX_TOKEN_LENGTH);
-                printf("PUSH found\n");
             } else if (!strcmp(current_tok, "ADD")) {
                 token_vec[token_amt] = ADD;
                 i = 0;
                 token_amt++;
                 // overwrite the token to 0
                 memset(current_tok, 0, MAX_TOKEN_LENGTH);
-                printf("ADD found\n");
             } else if (!strcmp(current_tok, "LOADM")) {
                 token_vec[token_amt] = LOADM;
                 i = 0;
                 token_amt++;
                 // overwrite the token to 0
                 memset(current_tok, 0, MAX_TOKEN_LENGTH);
-                printf("LOADM found\n");
             } else if (!strcmp(current_tok, "LOADVM")) {
                 token_vec[token_amt] = LOADVM;
                 i = 0;
                 token_amt++;
                 // overwrite the token to 0
                 memset(current_tok, 0, MAX_TOKEN_LENGTH);
-                printf("LOADVM found\n");
             // If the current token isnt empty (which could happen if the last line had an extra \n char), then we have an undefined token
             } else if(strlen(current_tok) != 0) {
                 // first, since PUSH Imm16 takes an immediate value in, check if this unknown token is an immediate and that the previous token is a PUSHI
@@ -281,7 +271,6 @@ token* tokenize_input(char* input, size_t* token_amount) {
                     token_amt++;
                     // overwrite the token to 0
                     memset(current_tok, 0, MAX_TOKEN_LENGTH);
-                    printf("%d found\n", value);
                 } else {
                     fprintf(stderr, "ERROR: Unrecognized Token: %s\n", current_tok);
                     exit(1);

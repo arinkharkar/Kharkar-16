@@ -6,6 +6,6 @@ all: emulator
 emulator: bin/emulator.o
 	$(LD) bin/emulator.o -o emulator
 
-emulator.o: src/emulator.c
+bin/emulator.o: src/emulator.c
 	$(CC) -c src/emulator.c -o bin/emulator.o
 

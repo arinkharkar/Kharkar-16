@@ -81,7 +81,7 @@ int main(int argc, char** argv) {
             // Set the overflow and zero bit if necessary
             if (cpu->REGISTER_A + cpu->REGISTER_B == 0) cpu->FLAGS |= 0b10;
             if ((size_t)cpu->REGISTER_A + (size_t)cpu->REGISTER_B > (size_t)UINT16_MAX) cpu->FLAGS |= 0b1;
-            cpu->REGISTER_A = cpu->REGISTER_A + cpu->REGISTER_B;
+            cpu->BUS = cpu->REGISTER_A + cpu->REGISTER_B;
             
             goto next;
         case LOADM:

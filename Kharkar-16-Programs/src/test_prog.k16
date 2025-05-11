@@ -1,11 +1,61 @@
+// Memory[0] = 10
+PUSH 0
 LDA
-HLT
-LDB
-LDC
-LDPC
-LDPCNZ
-PUSH 1512
+PUSH 10
 LOADM
-LOADVM
-LOADVM
+
+// Memory[2] = 0
+PUSH 2
 LDA
+PUSH 0
+LOADM
+
+// Memory[4] = 0
+PUSH 4
+LDA
+PUSH 1
+LOADM
+
+// Memory[6] = 2
+PUSH 6
+LDA
+PUSH 2
+LOADM
+
+// Memory[8] = 0
+PUSH 8
+LDA
+PUSH 0
+LOADM
+
+// Reg_B = Memory[2]
+PUSH 2
+LDA
+PUSH
+LDB
+
+// Reg_A = Memory[4]
+PUSH 4
+LDA
+PUSH
+LDA
+
+// BUS = Reg_A + Reg_B
+ADD
+
+
+PUSH 6
+LDA
+
+PUSH
+LDB
+
+PUSH 0
+LDA
+
+PUSH
+LDA
+
+SUB
+
+
